@@ -1,0 +1,8 @@
+services:
+    behat_test_generator:
+        class: BehatTestGenerator\BehatTestGenerator
+        public: true
+
+    BehatTestGenerator\Command\TestGeneratorCommand:
+        tags:
+            - { name: 'console.command', command: 'staffmatch:test:generate' }
