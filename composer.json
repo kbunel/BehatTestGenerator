@@ -1,7 +1,7 @@
 {
-    "name": "kbunel/BehatTestGenerator",
+    "name": "kbunel/behat-test-generator",
 	"type": "symfony-bundle",
-    "description": "API Test Generator for Behat test.",
+    "description": "Project under development",
     "keywords": [ "test", "generator", "behat", "api" ],
     "license": "MIT",
     "authors": [
@@ -23,7 +23,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.0.1"
+            "dev-master": "0.0.1-dev"
         }
     },
     "require-dev": {
