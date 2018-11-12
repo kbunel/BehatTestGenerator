@@ -3,18 +3,18 @@
 namespace App\Services\TestGenerator;
 
 use Symfony\Component\Asset\Exception\LogicException;
-use Doctrine\ORM\EntityManager;
-use App\Services\TestGenerator\FileManager;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Bridge\Doctrine\PropertyInfo\DoctrineExtractor;
-use App\Services\TestGenerator\LogManager;
-use App\Services\TestGenerator\EntityManager as TestGeneratorEntityManager;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Doctrine\ORM\EntityManager;
+use BehatTestGenerator\FileManager;
+use BehatTestGenerator\LogManager;
+use BehatTestGenerator\EntityManager as TestGeneratorEntityManager;
 
 class FixturesManager
 {
@@ -58,7 +58,6 @@ class FixturesManager
             ];
 
             if (file_exists($filePath)) {
-                $this->logManager->log($filePath . " already exists, skipped.", LogManager::TYPE_COMMENT);
                 continue;
             }
 

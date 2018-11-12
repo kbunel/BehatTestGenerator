@@ -11,10 +11,15 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "symfony": "^3.4",
+        "doctrine": "^2.0"
     },
     "autoload": {
-        "psr-4": { "BehatTestGenerator\\": "./" }
+        "psr-4": {
+            "BehatTestGenerator\\": "./BehatTestGenerator",
+            "BehatTestGenerator\\Command\\": "./BehatTestGenerator/Command"
+        }
     },
     "extra": {
         "branch-alias": {

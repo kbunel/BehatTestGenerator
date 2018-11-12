@@ -1,10 +1,9 @@
 <?php
 
-namespace Staffmatch\CoreBundle\Command;
+namespace BehatTestGenerator\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use App\Services\TestGenerator\TestGenerator;
@@ -30,6 +29,7 @@ class TestGeneratorCommand extends ContainerAwareCommand
             ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Should the test be generated from a specific controller ?')
             ->addOption('tag', null, InputOption::VALUE_OPTIONAL, 'Should the created scenarios be tagged ?')
             ->addOption('methods', null, InputOption::VALUE_OPTIONAL, 'Should the test generated be only for some methods ?')
+            ->addOption('fromNamespace', null, InputOption::VALUE_OPTIONAL, 'Namespace begining from which test will be generated')
         ;
     }
 
@@ -38,7 +38,8 @@ class TestGeneratorCommand extends ContainerAwareCommand
         $namespace = $input->getOption('namespace');
         $methods = $this->getMethods($input->getOption('methods'));
         $tag = $input->getOption('tag');
-        $this->testGenerator->generate($namespace, $methods, $tag);
+        $fromNamespace = $input->getOption('fromNamespace');
+        $this->testGenerator->generate($namespace, $methods, $tag, $fromNamespace, $output->isVerbose());
     }
 
     private function getMethods(?string $methods = null): ?array

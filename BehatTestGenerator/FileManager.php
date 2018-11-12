@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Services\TestGenerator;
+namespace BehatTestGenerator\TestGenerator;
 
 use Symfony\Component\Filesystem\Filesystem;
-use App\Services\TestGenerator\LogManager;
+use BehatTestGenerator\LogManager;
 
 class FileManager
 {
+    public const FILE_CREATED = 1;
+    public const FILE_UPDATED = 2;
+
     private $fs;
     private $featureRootPath;
 
@@ -26,25 +29,39 @@ class FileManager
         return ob_get_clean();
     }
 
-    public function getOrCreateTestFolder(string $namespace): string
+    public function getOrCreateTestFolder(string $namespace, bool $verbose = false): string
     {
         $controllerPath = $this->getPathFromNamespace($namespace);
         $path = $this->featureRootPath . DIRECTORY_SEPARATOR . $controllerPath;
 
         if (!file_exists($path)) {
+
             mkdir($path, 0777, true);
-            $this->logManager->log($path . " folder created", LogManager::TYPE_COMMENT);
+
+            if ($verbose) {
+                $this->logManager->log($path . " folder created", LogManager::TYPE_COMMENT);
+            }
         }
 
         return $path;
     }
 
-    public function write(string $filePath, string $content): void
+    public function write(string $filePath, string $content, bool $verbose = false): string
     {
-        $comment = file_exists($filePath) ? ' updated' : ' created';
+        if (file_exists($filePath)) {
+            $comment = ' updated';
+            $status = self::FILE_UPDATED;
+        } else {
+            $comment = ' created';
+            $status = self::FILE_CREATED;
+        }
 
         $this->fs->dumpFile($filePath, $content);
-        $this->logManager->log($filePath . $comment, LogManager::TYPE_COMMENT);
+        if ($verbose) {
+            $this->logManager->log($filePath . $comment, LogManager::TYPE_COMMENT);
+        }
+
+        return $status;
     }
 
     private function getPathFromNamespace(string $namespace): string

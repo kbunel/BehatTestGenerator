@@ -11,9 +11,6 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class FeatureManager
 {
-    public const FILE_CREATED = 1;
-    public const FILE_UPDATED = 2;
-
     private const AUTHENT_EMAIL = 'first-super-admin@staffmatch.com';
     private const BACKGROUND_TPL = __DIR__ . '/templates/features/background.tpl.php';
     private const SCENARIO_TPL = __DIR__ . '/templates/features/scenario.tpl.php';
@@ -22,24 +19,31 @@ class FeatureManager
     private $fileManager;
     private $formFactory;
     private $em;
+    private $authenticationEmail;
+    private $commonFixtures;
+    private $httpResponses;
 
-    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManager $em)
+    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManager $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
     {
+        $this->authenticationEmail = $authenticationEmail;
         $this->fileManager = $fileManager;
         $this->formFactory = $formFactory;
         $this->em = $em;
+        $this->commonFixtures = $commonFixtures;
+        $this->httpResponses = $httpResponses;
     }
 
-    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods = null, ?string $tag = null, array $servicesUsed): ?string
+    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods = null, ?string $tag = null, array $servicesUsed, bool $verbose = false): ?array
     {
         $fileName = $this->getFileNameFromNamespace($namespace);
         $filePath = $testFolder . DIRECTORY_SEPARATOR . $fileName;
         $fixturesFilesNames = $this->getFixturesFilesNamesFromPaths($fixturesDetails);
         $routes = $this->getRequiredRouteInformations($routes, $servicesUsed);
         $parameters = [
+            'commonFixtures' => $this->commonFixtures,
             'namespace' => $namespace,
             'fixturesFilesNames' => $fixturesFilesNames,
-            'authenticationEmail' => self::AUTHENT_EMAIL,
+            'authenticationEmail' => $this->getAuthenticationEmail($routes),
             'routes' => $routes,
             'tag' => $tag,
             'methods' => $methods,
@@ -51,9 +55,25 @@ class FeatureManager
             return null;
         }
 
-        $this->fileManager->write($filePath, $content);
+        $status['file'] = $this->fileManager->write($filePath, $content, $verbose);
+        $status['scenarios'] = substr_count($content, 'Scenario');
 
-        return file_exists($filePath) ? self::FILE_UPDATED : self::FILE_CREATED;
+        return $status;
+    }
+
+    private function getAuthenticationEmail(array $routes): ?string
+    {
+        if (!$routes) {
+            return null;
+        }
+
+        foreach ($this->authenticationEmail as $path => $value) {
+            if (preg_match('/' . str_replace('/', '\\/', $path) . '/', $routes[0]['path'])) {
+                return $value;
+            }
+        }
+
+        return $this->authenticationEmail['default'];
     }
 
     private function getContent(string $filePath, array $parameters): ?string
@@ -66,11 +86,11 @@ class FeatureManager
 
         $scenarios = $this->getScenariosContent($filePath, $parameters);
 
-        if (empty($scenarios)) {
+        if (empty(trim($scenarios))) {
             return null;
         }
 
-        return $content . $scenarios;
+        return trim(trim($content) . "\n" . $scenarios) . "\n";
     }
 
     private function checkFixturesImports(string $content, array $parameters): string
@@ -141,24 +161,6 @@ class FeatureManager
 
         return implode("\n", $background['content']) . "\n" . implode("\n", $imports['content']) . "\n" . implode("\n", $eof['content']);
     }
-
-    // private function getFixturesToLoad(array $parameters): array
-    // {
-    //     $filesToLoad = [];
-    //     foreach ($parameters['routes'] as $route) {
-    //         if (isset($route['requiredFields'])) {
-
-    //             foreach ($route['requiredFields'] as $requiredField) {
-    //                 if ($requiredField['class']) {
-    //                     preg_match('/[a-zA-Z0-9]+$/', $requiredField['class'], $entityName);
-    //                     $filesToLoad[] = strtolower($entityName[0]);
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return $filesToLoad;
-    // }
 
     private function getFixturesLoaded(string $content): array
     {
@@ -236,7 +238,7 @@ class FeatureManager
                     'codeResponse' => $this->getCodeResponseFromMethod($route->getMethods()[0]),
                 ];
 
-                if (strtolower($infos['method']) == 'put') {
+                if (in_array(strtolower($infos['method']), ['put', 'post'])) {
                     $infos = array_merge($infos, ['requiredFields' => $this->getRequiredFields($route, $servicesUsed)]);
                 }
 
@@ -271,44 +273,30 @@ class FeatureManager
                         $options = $constraint->choices;
                     }
                 }
+
                 $options = $child->getConfig()->getOptions();
-
-                $value = $this->getValue($options);
-
-                // $value = null;
-                // if (isset($options['class'])) {
-                //     $entityClassName =  $this->em->getClassMetadata($options['class'])->getName();
-                //     preg_match('/[a-zA-Z0-9]+$/', $entityClassName, $value);
-                //     $value = strtolower($value[0]);
-                // }
-
-                // dump($options);
-                // die;
+                $type = get_class($child->getConfig()->getType()->getInnerType());
+                $value = $this->getValue($options, $type);
                 $requiredFields[] = [
                     'name' => $child->getname(),
                     'class' => isset($options['class']) ? $this->em->getClassMetadata($options['class'])->getName() : null,
                     'value' => $value,
                 ];
-
-                // return [
-                //     'name' => $child->getname(),
-                //     'class' => isset($options['class']) ? $this->em->getClassMetadata($options['class'])->getName() : null,
-                //     'input' => isset($options['input']) ? $options['input'] : null,
-                //     'format' => isset($options['format']) ? $options['format'] : null,
-                // ];
             }
         }
 
         return $requiredFields;
     }
 
-    private function getValue(array $options)
+    private function getValue(array $options, string $type)
     {
         switch (true) {
             case isset($options['class']):
-                return 1;
+                return $options['multiple'] ? '[' . 1 . ']' : 1;
             case isset($options['choices']) && count($options) > 0:
-                return '"' . array_values($options['choices'])[0] . '"';
+                $value = '"' . array_values($options['choices'])[0] . '"';
+
+                return $options['multiple'] ? '[' . $value . ']' : $value;
             case isset($options['input']):
                 switch($options['input']) {
                     case 'datetime':
@@ -318,14 +306,57 @@ class FeatureManager
                         dump($options['input']);
                         die;
                 }
+            case count($options['constraints']) > 0:
+                foreach ($options['constraints'] as $constraint) {
+                    if (preg_match('/Email$/', get_class($constraint))) {
+                        return '"test@test.com"';
+                    } elseif (preg_match('/PhoneNumber$/', get_class($constraint))) {
+                        return '"0606060606"';
+                    } elseif (preg_match('/Range$/', get_class($constraint))) {
+                        return rand($constraint->min, $constraint->max);
+                    } elseif (preg_match('/Length$/', get_class($constraint))) {
+                        switch ($type) {
+                            case 'Symfony\Component\Form\Extension\Core\Type\NumberType':
+                                return pow(10, $constraint->min -1);
+                            case 'Symfony\Component\Form\Extension\Core\Type\IntegerType':
+                                return pow(10, $constraint->min -1);
+                            default:
+                                return '"' . pow(10, $constraint->min -1) . '"';
+                        }
+                    } elseif (preg_match('/GreaterThanOrEqual$/', get_class($constraint))) {
+                        return $constraint->value;
+                    } elseif (preg_match('/Ssn$/', get_class($constraint))) {
+                        return '"192126442203529"';
+                    } elseif (preg_match('/Type$/', get_class($constraint))) {
+                        switch($constraint->type) {
+                            case 'numeric':
+                                return 1;
+                        }
+                    } elseif (preg_match('/Choice$/', get_class($constraint))) {
+                        return '"' . $constraint->choices[0] . '"';
+                    }
+                }
             default:
-                return '""';
+                switch ($type) {
+                    case 'Symfony\Component\Form\Extension\Core\Type\TextType':
+                        return '"test"';
+                    case 'Symfony\Component\Form\Extension\Core\Type\DateTimeType':
+                        return '"' . (new \DateTime('now'))->format($format) . '"';;
+                    case 'Symfony\Component\Form\Extension\Core\Type\NumberType':
+                        return '1';
+                    case 'Symfony\Component\Form\Extension\Core\Type\ChoiceType':
+                        return '"test"';
+                    case 'Symfony\Component\Form\Extension\Core\Type\IntegerType':
+                        return '1';
+                    default:
+                        return '"test"';
+                }
         }
     }
 
     private function convertDateFormat(string $format): string
     {
-        return preg_replace(['/yyyy/', '/MM/', '/dd/', '/HH/', '/mm/'], ['Y', 'm', 'd', 'H', 'i'], $format);
+        return preg_replace(['/yyyy/', '/MM/', '/dd/', '/HH/', '/mm/', '/ss/', '/\'T\'/'], ['Y', 'm', 'd', 'H', 'i', 's', '\\T'], $format);
     }
 
     private function getFormTypeUsedInRoute(Route $route, array $servicesUsed): ?string
@@ -376,7 +407,7 @@ class FeatureManager
     {
         switch ($method) {
             case 'POST':
-                return 201;
+                return isset($this->httpResponses['post']) ? $this->httpResponses['post'] : 201;
             case 'PUT':
                 return 204;
             case 'PATCH':
