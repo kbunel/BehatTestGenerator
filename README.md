@@ -1,3 +1,5 @@
+This project is currently in development and is not available
+
 Installation
 ============
 
