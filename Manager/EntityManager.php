@@ -1,6 +1,6 @@
 <?php
 
-namespace BehatTestGenerator\TestGenerator;
+namespace BehatTestGenerator\Manager;
 
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Symfony\Component\PropertyAccess\PropertyAccess;

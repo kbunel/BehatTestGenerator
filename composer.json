@@ -15,8 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BehatTestGenerator\\": "./BehatTestGenerator",
-            "BehatTestGenerator\\Command\\": "./BehatTestGenerator/Command"
+            "BehatTestGenerator\\": "./"
         }
     },
     "extra": {

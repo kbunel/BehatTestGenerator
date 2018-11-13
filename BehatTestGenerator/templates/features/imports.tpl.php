@@ -1,1 +1,0 @@
-      | <?= $fixturesFilesName ?> |<?= PHP_EOL ?>

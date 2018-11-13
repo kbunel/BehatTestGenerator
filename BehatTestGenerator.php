@@ -1,6 +1,6 @@
 <?php
 
-namespace BehatTestGenerator\BehatTestGenerator;
+namespace BehatTestGenerator;
 
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\Route;

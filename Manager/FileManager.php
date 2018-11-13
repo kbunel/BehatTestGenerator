@@ -1,6 +1,6 @@
 <?php
 
-namespace BehatTestGenerator\TestGenerator;
+namespace BehatTestGenerator\Manager;
 
 use Symfony\Component\Filesystem\Filesystem;
 use BehatTestGenerator\LogManager;

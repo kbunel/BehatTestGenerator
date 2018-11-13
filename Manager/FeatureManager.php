@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TestGenerator;
+namespace BehatTestGenerator\Manager;
 
 use App\Services\TestGenerator\FileManager;
 use Symfony\Component\Routing\Route;

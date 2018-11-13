@@ -10,7 +10,7 @@ use App\Services\TestGenerator\TestGenerator;
 
 class TestGeneratorCommand extends ContainerAwareCommand
 {
-    protected static $defaultName = 'staffmatch:test:generate';
+    protected static $defaultName = 'behat:test:generate';
 
     private $testGenerator;
 

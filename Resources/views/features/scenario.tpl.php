@@ -5,8 +5,8 @@
   @<?= $tag ?><?= PHP_EOL ?>
 <?php endif ?>
   Scenario: <?= $route['functionName'] ?><?= PHP_EOL ?>
-<?php if (strtolower($route['method']) == 'put'): ?>
-    Given I add "content-type" header equal to "application/json"<?= PHP_EOL ?>
+<?php if (in_array(strtolower($route['method']), ['put', 'patch', 'post'])): ?>
+    Given I add "Content-Type" header equal to "application/json"<?= PHP_EOL ?>
     Given I send a <?= $route['method']?> request to "<?= $route['path'] ?>" with body:<?= PHP_EOL ?>
     """<?= PHP_EOL ?>
     {<?= PHP_EOL ?>
@@ -22,4 +22,5 @@
     Given I send a <?= $route['method']?> request to "<?= $route['path'] ?>"<?= PHP_EOL ?>
 <?php endif ?>
     Then the response status code should be <?= $route['codeResponse'] ?><?= PHP_EOL ?>
+<?= PHP_EOL ?>
 <?php endforeach; ?>

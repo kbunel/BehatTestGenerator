@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TestGenerator;
+namespace BehatTestGenerator\Manager;
 
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
