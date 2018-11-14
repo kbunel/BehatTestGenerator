@@ -2,8 +2,8 @@
 
 namespace BehatTestGenerator\Manager;
 
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 
 class EntityManager
 {

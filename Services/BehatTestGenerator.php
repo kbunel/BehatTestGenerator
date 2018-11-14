@@ -1,14 +1,14 @@
 <?php
 
-namespace BehatTestGenerator;
+namespace BehatTestGenerator\Services;
 
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Asset\Exception\LogicException;
-use BehatTestGenerator\FileManager;
-use BehatTestGenerator\FixturesManager;
-use BehatTestGenerator\FeatureManager;
-use BehatTestGenerator\LogManager;
+use BehatTestGenerator\Manager\FileManager;
+use BehatTestGenerator\Manager\FixturesManager;
+use BehatTestGenerator\Manager\FeatureManager;
+use BehatTestGenerator\Manager\LogManager;
 
 class BehatTestGenerator
 {
@@ -19,7 +19,7 @@ class BehatTestGenerator
     private $logManager;
     private $verbose;
 
-    public function __construct(Router $router, FileManager $fileManager, FixturesManager $fixturesManager, FeatureManager $featureManager, LogManager $logManager)
+    public function __construct(RouterInterface $router, FileManager $fileManager, FixturesManager $fixturesManager, FeatureManager $featureManager, LogManager $logManager)
     {
         $this->router = $router;
         $this->fileManager = $fileManager;

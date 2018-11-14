@@ -12,9 +12,9 @@ use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManager;
-use BehatTestGenerator\FileManager;
-use BehatTestGenerator\LogManager;
-use BehatTestGenerator\EntityManager as TestGeneratorEntityManager;
+use BehatTestGenerator\Manager\FileManager;
+use BehatTestGenerator\Manager\LogManager;
+use BehatTestGenerator\Manager\EntityManager as TestGeneratorEntityManager;
 
 class FixturesManager
 {

@@ -1,8 +1,37 @@
 services:
-    behat_test_generator:
-        class: BehatTestGenerator\BehatTestGenerator
-        public: true
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+                            # fetching services directly from the container via $container->get() won't work.
+                            # The best practice is to be explicit about your dependencies anyway.
 
-    BehatTestGenerator\Command\TestGeneratorCommand:
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+
+    fixtures_manager:
+        class: BehatTestGenerator\Manager\FixturesManager
+        arguments:
+            $fixturesDirPath: "%kernel.root_dir%/../features/Fixtures/Base"
+
+    feature_manager:
+        class: BehatTestGenerator\Manager\FeatureManager
+        arguments:
+            $commonFixtures: 'Base/common.yaml'
+            $authenticationEmail:
+                default: ''
+            $httpResponses:
+                get: 200
+                put: 204
+                patch: 204
+                post: 200
+                delete: 201
+
+
+    BehatTestGenerator\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    BehatTestGenerator\Command\BehatTestGeneratorCommand:
         tags:
             - { name: 'console.command', command: 'behat:test:generate' }

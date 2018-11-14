@@ -3,7 +3,7 @@
 namespace BehatTestGenerator\Manager;
 
 use Symfony\Component\Filesystem\Filesystem;
-use BehatTestGenerator\LogManager;
+use BehatTestGenerator\Manager\LogManager;
 
 class FileManager
 {

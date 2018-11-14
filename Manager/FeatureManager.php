@@ -2,12 +2,12 @@
 
 namespace BehatTestGenerator\Manager;
 
-use App\Services\TestGenerator\FileManager;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Form\FormFactoryInterface;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
+use Symfony\Component\Debug\Exception\ContextErrorException;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use BehatTestGenerator\Manager\FileManager;
 
 class FeatureManager
 {
@@ -23,7 +23,7 @@ class FeatureManager
     private $commonFixtures;
     private $httpResponses;
 
-    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManager $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
+    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
     {
         $this->authenticationEmail = $authenticationEmail;
         $this->fileManager = $fileManager;

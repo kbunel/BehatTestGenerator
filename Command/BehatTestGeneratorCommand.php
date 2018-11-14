@@ -6,15 +6,15 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use App\Services\TestGenerator\TestGenerator;
+use BehatTestGenerator\Services\BehatTestGenerator;
 
-class TestGeneratorCommand extends ContainerAwareCommand
+class BehatTestGeneratorCommand extends ContainerAwareCommand
 {
     protected static $defaultName = 'behat:test:generate';
 
     private $testGenerator;
 
-    public function __construct(TestGenerator $testGenerator)
+    public function __construct(BehatTestGenerator $testGenerator)
     {
         $this->testGenerator = $testGenerator;
 

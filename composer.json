@@ -11,13 +11,15 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "symfony/form": "4.1.*"
     },
     "autoload": {
         "psr-4": {
             "BehatTestGenerator\\": "./"
         }
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "0.0.1-dev"
