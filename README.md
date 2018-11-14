@@ -1,4 +1,6 @@
-This project is currently in development and is not available
+This bundle is in development and is currently not operational
+
+Add a command to generate API with behat. This command will parse controllers to get the routes and determine create simple test. The tests expectations are based on the HTTP response according to the method.
 
 Installation
 ============
@@ -44,7 +46,9 @@ class AppKernel extends Kernel
     {
         $bundles = array(
             // ...
-            new kbunel\BehatTestGenerator(),
+            new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
+            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new BehatTestGenerator\BehatTestGeneratorBundle(),
         );
 
         // ...
@@ -52,4 +56,61 @@ class AppKernel extends Kernel
 
     // ...
 }
+```
+
+Command
+============
+
+To generate the tests, run:
+
+```console
+$ php bin/console behat:test:generate
+```
+
+Available options
+----------------------------------
+
+### Add a tag:
+
+```console
+$ php bin/console behat:test:generate tag=new
+```
+
+### Generate tests from a specific controller with his namespace:
+
+```console
+$ php bin/console behat:test:generate namespace='App\Controller\MyController'
+```
+
+### Generate tests for specifics method (separated by a comma):
+
+```console
+$ php bin/console behat:test:generate methods='put,patch'
+```
+
+### Generate tests from a specific namespace:
+
+This option will get all routes from controllers whose namespace begin by the specified one
+
+```console
+$ php bin/console behat:test:generate fromNamespace='App\Controller\Users'
+```
+
+Available configuration
+----------------------------------
+```yaml
+behat_test_generator:
+    fixtures:
+        folder: 'path/to/the/fixtures/folder'
+    features:
+        commonFixtures: 'NameOfTheCommonFileFixtures.yaml' // File used to add the common fixture with the fixtures generated
+        authenticationEmails:
+            ^admin: 'super_admin@test.com' // This is an array ['route_regex' => 'email_used']
+            ^user: 'user@test.com'
+        httpResponses: // http responses used with test expectations
+            get: 200
+            put: 204
+            patch: 204
+            post: 200
+            delete: 204
 ```

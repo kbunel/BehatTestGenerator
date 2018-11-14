@@ -37,10 +37,6 @@ class BehatTestGeneratorExtension extends Extension
 			if (isset($config['features']['httpResponses'])) {
 				$featureDefinition->replaceArgument('$httpResponses', $config['features']['httpResponses']);
 			}
-
-			// var_dump($featureDefinition->getArguments());
-			// die;
-
 		}
     }
 }
