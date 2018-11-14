@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use BehatTestGenerator\Manager\FileManager;
 use BehatTestGenerator\Manager\LogManager;
 use BehatTestGenerator\Manager\EntityManager as TestGeneratorEntityManager;
@@ -28,7 +28,7 @@ class FixturesManager
 
     private const TEMPLATE_PATH = __DIR__ . '/templates/fixtures.tpl.php';
 
-    public function __construct(string $fixturesDirPath, EntityManager $em, FileManager $fileManager, LogManager $logManager, TestGeneratorEntityManager $entityManager, FormFactoryInterface $formFactory)
+    public function __construct(string $fixturesDirPath, EntityManagerInterface $em, FileManager $fileManager, LogManager $logManager, TestGeneratorEntityManager $entityManager, FormFactoryInterface $formFactory)
     {
         $this->em = $em;
         $this->fileManager = $fileManager;

@@ -3,7 +3,7 @@
 namespace BehatTestGenerator\Manager;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 
 class EntityManager
 {
@@ -11,7 +11,7 @@ class EntityManager
 
     private $em;
 
-    public function __construct(DoctrineEntityManager $em)
+    public function __construct(DoctrineEntityManagerInterface $em)
     {
         $this->em = $em;
     }

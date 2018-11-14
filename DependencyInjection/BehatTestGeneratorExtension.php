@@ -18,8 +18,10 @@ class BehatTestGeneratorExtension extends Extension
 		$config = $this->processConfiguration($configuration, $configs);
 
 
-		$fixturesDefinition = $container->getDefinition('fixtures_manager');
-		$fixturesDefinition->setArgument('$fixturesDirPath', $config['fixtures']['folder']);
+		if (isset($config['fixtures'], $config['fixtures']['folder'])) {
+			$fixturesDefinition = $container->getDefinition('fixtures_manager');
+			$fixturesDefinition->setArgument('$fixturesDirPath', $config['fixtures']['folder']);
+		}
 
 		if (isset($config['features'])) {
 			$featureDefinition = $container->getDefinition('feature_manager');

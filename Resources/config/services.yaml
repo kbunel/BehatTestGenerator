@@ -9,13 +9,19 @@ services:
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
 
-    fixtures_manager:
-        class: BehatTestGenerator\Manager\FixturesManager
+    BehatTestGenerator\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    BehatTestGenerator\Command\BehatTestGeneratorCommand:
+        tags:
+            - { name: 'console.command', command: 'behat:test:generate' }
+
+    BehatTestGenerator\Manager\FixturesManager:
         arguments:
             $fixturesDirPath: "%kernel.root_dir%/../features/Fixtures/Base"
 
-    feature_manager:
-        class: BehatTestGenerator\Manager\FeatureManager
+    BehatTestGenerator\Manager\FeatureManager:
         arguments:
             $commonFixtures: 'Base/common.yaml'
             $authenticationEmail:
@@ -27,11 +33,12 @@ services:
                 post: 200
                 delete: 201
 
+    BehatTestGenerator\Manager\FileManager:
+        arguments:
+            $featureRootPath: '%kernel.root_dir%/../features'
 
-    BehatTestGenerator\:
-        resource: '../../*'
-        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+    feature_manager:
+        alias: BehatTestGenerator\Manager\FeatureManager
 
-    BehatTestGenerator\Command\BehatTestGeneratorCommand:
-        tags:
-            - { name: 'console.command', command: 'behat:test:generate' }
+    fixtures_manager:
+        alias: BehatTestGenerator\Manager\FixturesManager
