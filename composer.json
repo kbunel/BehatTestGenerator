@@ -13,6 +13,7 @@
     "require": {
         "php": ">=7.1.0",
         "symfony/form": "4.1.*",
+        "symfony/property-info": "4.1.*",
         "phpdocumentor/reflection-docblock": "^4.3",
         "doctrine/doctrine-bundle": "^1.9",
         "doctrine/orm": "^2.6"
