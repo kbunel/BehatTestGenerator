@@ -70,25 +70,25 @@ $ php bin/console behat:test:generate
 Available options
 ----------------------------------
 
-# Add a tag:
+##### Add a tag:
 
 ```console
 $ php bin/console behat:test:generate tag=new
 ```
 
-# Generate tests from a specific controller with his namespace:
+##### Generate tests from a specific controller with his namespace:
 
 ```console
 $ php bin/console behat:test:generate namespace='App\Controller\MyController'
 ```
 
-# Generate tests for specifics method (separated by a comma):
+##### Generate tests for specifics method (separated by a comma):
 
 ```console
 $ php bin/console behat:test:generate methods='put,patch'
 ```
 
-# Generate tests from a specific namespace:
+##### Generate tests from a specific namespace:
 
 This option will get all routes from controllers whose namespace begin by the specified one
 
