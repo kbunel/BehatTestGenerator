@@ -15,7 +15,7 @@ services:
 
     BehatTestGenerator\Command\BehatTestGeneratorCommand:
         tags:
-            - { name: 'console.command', command: 'behat:test:generate' }
+            - { name: 'console.command', command: 'kbunel:generate:tests' }
 
     BehatTestGenerator\Manager\FixturesManager:
         arguments:

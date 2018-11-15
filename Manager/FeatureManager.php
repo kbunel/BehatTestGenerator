@@ -11,10 +11,9 @@ use BehatTestGenerator\Manager\FileManager;
 
 class FeatureManager
 {
-    private const AUTHENT_EMAIL = 'first-super-admin@staffmatch.com';
-    private const BACKGROUND_TPL = __DIR__ . '/templates/features/background.tpl.php';
-    private const SCENARIO_TPL = __DIR__ . '/templates/features/scenario.tpl.php';
-    private const FIXTURES_IMPORT_TPL = __DIR__ . '/templates/features/imports.tpl.php';
+    private const BACKGROUND_TPL = __DIR__ . '/../Templates/features/background.tpl.php';
+    private const SCENARIO_TPL = __DIR__ . '/../Templates/features/scenario.tpl.php';
+    private const FIXTURES_IMPORT_TPL = __DIR__ . '/../Templates/features/imports.tpl.php';
 
     private $fileManager;
     private $formFactory;

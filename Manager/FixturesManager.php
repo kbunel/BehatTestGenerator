@@ -26,7 +26,7 @@ class FixturesManager
     private $entityManager;
     private $formFactory;
 
-    private const TEMPLATE_PATH = __DIR__ . '/templates/fixtures.tpl.php';
+    private const TEMPLATE_PATH = __DIR__ . '/../Templates/fixtures.tpl.php';
 
     public function __construct(string $fixturesDirPath, EntityManagerInterface $em, FileManager $fileManager, LogManager $logManager, TestGeneratorEntityManager $entityManager, FormFactoryInterface $formFactory)
     {

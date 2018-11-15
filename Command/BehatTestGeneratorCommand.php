@@ -10,7 +10,7 @@ use BehatTestGenerator\Services\BehatTestGenerator;
 
 class BehatTestGeneratorCommand extends ContainerAwareCommand
 {
-    protected static $defaultName = 'behat:test:generate';
+    protected static $defaultName = 'kbunel:generate:tests';
 
     private $testGenerator;
 
