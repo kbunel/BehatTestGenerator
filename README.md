@@ -46,8 +46,6 @@ class AppKernel extends Kernel
     {
         $bundles = array(
             // ...
-            new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
-            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new BehatTestGenerator\BehatTestGeneratorBundle(),
         );
 
