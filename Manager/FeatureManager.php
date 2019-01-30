@@ -11,46 +11,44 @@ use BehatTestGenerator\Manager\FileManager;
 
 class FeatureManager
 {
-    private const BACKGROUND_TPL = __DIR__ . '/../Templates/features/background.tpl.php';
-    private const SCENARIO_TPL = __DIR__ . '/../Templates/features/scenario.tpl.php';
-    private const FIXTURES_IMPORT_TPL = __DIR__ . '/../Templates/features/imports.tpl.php';
+    private const BACKGROUND_TPL        = __DIR__ . '/../Templates/features/background.tpl.php';
+    private const SCENARIO_TPL          = __DIR__ . '/../Templates/features/scenario.tpl.php';
+    private const FIXTURES_IMPORT_TPL   = __DIR__ . '/../Templates/features/imports.tpl.php';
 
-    private $fileManager;
-    private $formFactory;
-    private $em;
     private $authenticationEmail;
     private $commonFixtures;
     private $httpResponses;
+    private $fileManager;
+    private $formFactory;
+    private $em;
 
     public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
     {
         $this->authenticationEmail = $authenticationEmail;
+        $this->commonFixtures = $commonFixtures;
+        $this->httpResponses = $httpResponses;
         $this->fileManager = $fileManager;
         $this->formFactory = $formFactory;
         $this->em = $em;
-        $this->commonFixtures = $commonFixtures;
-        $this->httpResponses = $httpResponses;
     }
 
-    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods = null, ?string $tag = null, array $servicesUsed, bool $verbose = false): ?array
+    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods, ?string $tag, array $servicesUsed = [], bool $verbose = false): ?array
     {
         $fileName = $this->getFileNameFromNamespace($namespace);
         $filePath = $testFolder . DIRECTORY_SEPARATOR . $fileName;
         $fixturesFilesNames = $this->getFixturesFilesNamesFromPaths($fixturesDetails);
         $routes = $this->getRequiredRouteInformations($routes, $servicesUsed);
         $parameters = [
+            'authenticationEmail' => $this->getAuthenticationEmail($routes),
+            'fixturesFilesNames' => $fixturesFilesNames,
             'commonFixtures' => $this->commonFixtures,
             'namespace' => $namespace,
-            'fixturesFilesNames' => $fixturesFilesNames,
-            'authenticationEmail' => $this->getAuthenticationEmail($routes),
+            'methods' => $methods,
             'routes' => $routes,
             'tag' => $tag,
-            'methods' => $methods,
         ];
 
-        $content = $this->getContent($filePath, $parameters);
-
-        if (!$content) {
+        if (!$content = $this->getContent($filePath, $parameters)) {
             return null;
         }
 
@@ -298,8 +296,8 @@ class FeatureManager
                         $format = isset($options['format']) ? $this->convertDateFormat($options['format']) : 'Y-m-d';
                         return '"' . (new \DateTime('now'))->format($format) . '"';
                     default:
-                        dump($options['input']);
-                        die;
+                        // Didn't find any default value
+                        return "";
                 }
             case count($options['constraints']) > 0:
                 foreach ($options['constraints'] as $constraint) {

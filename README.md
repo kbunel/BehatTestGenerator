@@ -62,7 +62,7 @@ Command
 To generate the tests, run:
 
 ```console
-$ php bin/console behat:test:generate
+$ php bin/console kbunel:behat:generate-test
 ```
 
 Available options
@@ -71,19 +71,19 @@ Available options
 ##### Add a tag:
 
 ```console
-$ php bin/console behat:test:generate tag=new
+$ php bin/console kbunel:behat:generate-test tag=new
 ```
 
 ##### Generate tests from a specific controller with his namespace:
 
 ```console
-$ php bin/console behat:test:generate namespace='App\Controller\MyController'
+$ php bin/console kbunel:behat:generate-test namespace='App\Controller\MyController'
 ```
 
 ##### Generate tests for specifics method (separated by a comma):
 
 ```console
-$ php bin/console behat:test:generate methods='put,patch'
+$ php bin/console kbunel:behat:generate-test methods='put,patch'
 ```
 
 ##### Generate tests from a specific namespace:
@@ -91,7 +91,7 @@ $ php bin/console behat:test:generate methods='put,patch'
 This option will get all routes from controllers whose namespace begin by the specified one
 
 ```console
-$ php bin/console behat:test:generate fromNamespace='App\Controller\Users'
+$ php bin/console kbunel:behat:generate-test fromNamespace='App\Controller\Users'
 ```
 
 Available configuration
