@@ -10,7 +10,7 @@ use BehatTestGenerator\Services\BehatTestGenerator;
 
 class BehatTestGeneratorCommand extends ContainerAwareCommand
 {
-    protected static $defaultName = 'kbunel:generate:tests';
+    protected static $defaultName = 'kbunel:behat:generate-test';
 
     private $testGenerator;
 
@@ -39,6 +39,7 @@ class BehatTestGeneratorCommand extends ContainerAwareCommand
         $methods = $this->getMethods($input->getOption('methods'));
         $tag = $input->getOption('tag');
         $fromNamespace = $input->getOption('fromNamespace');
+
         $this->testGenerator->generate($namespace, $methods, $tag, $fromNamespace, $output->isVerbose());
     }
 

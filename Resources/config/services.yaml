@@ -30,8 +30,8 @@ services:
                 get: 200
                 put: 204
                 patch: 204
-                post: 200
-                delete: 201
+                post: 201
+                delete: 204
 
     BehatTestGenerator\Manager\FileManager:
         arguments:
