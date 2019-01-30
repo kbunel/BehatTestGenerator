@@ -8,5 +8,7 @@ Feature: Test Routes for <?= $namespace ?><?= PHP_EOL ?>
 <?php foreach ($fixturesFilesNames as $fixturesFilesName): ?>
 <?php include __DIR__.'/imports.tpl.php' ?>
 <?php endforeach; ?>
-    Given I am authenticated as "<?= $authenticationEmail ?>"<?= PHP_EOL ?>
+<?php if ($authenticationEmail): ?>
+        Given I am authenticated as "<?= $authenticationEmail ?>"<?= PHP_EOL ?>
+<?php endif ?>
 <?= PHP_EOL ?>

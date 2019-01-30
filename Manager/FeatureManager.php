@@ -22,7 +22,7 @@ class FeatureManager
     private $formFactory;
     private $em;
 
-    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
+    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, ?array $authenticationEmail, string $commonFixtures, array $httpResponses)
     {
         $this->authenticationEmail = $authenticationEmail;
         $this->commonFixtures = $commonFixtures;
@@ -60,7 +60,7 @@ class FeatureManager
 
     private function getAuthenticationEmail(array $routes): ?string
     {
-        if (!$routes) {
+        if (!$routes || !$this->authenticationEmail) {
             return null;
         }
 
@@ -69,8 +69,6 @@ class FeatureManager
                 return $value;
             }
         }
-
-        return $this->authenticationEmail['default'];
     }
 
     private function getContent(string $filePath, array $parameters): ?string
@@ -364,12 +362,15 @@ class FeatureManager
         $length = $end_line - $start_line;
         $source = file($filename);
         $lines = array_slice($source, $start_line, $length);
+
         foreach ($lines as $line) {
             $line = trim($line);
             preg_match('/[a-zA-Z0-9]+Type::class/', $line, $supposedFormType);
+
             if (isset($supposedFormType[0])) {
                 $supposedFormType = explode('::', $supposedFormType[0])[0];
                 $formType = $this->getServiceAssociated($supposedFormType, $servicesUsed);
+
                 if (!$formType) {
                     $formType = preg_replace('/[a-zA-Z0-9]+$/', $supposedFormType, $namespace);
                 }
@@ -430,6 +431,7 @@ class FeatureManager
         $paramConverted = $this->getParamConverted($fLine, $lines);
         preg_match_all('/[a-zA-Z0-9\\\\]* \\$[a-zA-Z0-9]+/', $functionLine, $functionServices);
         $params = [];
+
         foreach ($functionServices[0] as $service) {
             $ar = explode(' ', str_replace('$', '', $service));
 
@@ -467,18 +469,21 @@ class FeatureManager
         $p = [];
         for ($x = $fLine; (trim($lines[$x]) != '' || $x == 0); $x--) {
             $line = trim($lines[$x]);
+
             if (preg_match('/\@ParamConverter/', $line)) {
                 $paramConverterLine = $line;
                 preg_match('/\(\"[a-zA-Z0-9-_]+\"/', $paramConverterLine, $paramConverted);
                 $paramsConverted = preg_replace('/[\(,"]/', '', $paramConverted);
                 preg_match('/options=\{[a-zA-Z0-9\"\!\ \-\_\!\:]+\}/', $paramConverterLine, $options);
+
                 if (count($options) == 0) {
                     continue;
                 }
+
                 $p[$paramsConverted[0]] = preg_replace('/(options={)|}|\"|\ /', '', $options[0]);
                 $options = explode(',', $p[$paramsConverted[0]]);
-                $p[$paramsConverted[0]] = [];
 
+                $p[$paramsConverted[0]] = [];
                 foreach ($options as $option) {
                     $opt = explode(':', $option);
                     $p[$paramsConverted[0]] = array_merge($p[$paramsConverted[0]], [$opt[0] => str_replace('!', '', $opt[1])]);

@@ -35,7 +35,6 @@ class FileManager
         $path = $this->featureRootPath . DIRECTORY_SEPARATOR . $controllerPath;
 
         if (!file_exists($path)) {
-
             mkdir($path, 0777, true);
 
             if ($verbose) {
@@ -71,5 +70,4 @@ class FileManager
 
         return implode('/', $ar);
     }
-
 }
