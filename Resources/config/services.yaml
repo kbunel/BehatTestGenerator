@@ -36,9 +36,3 @@ services:
     BehatTestGenerator\Manager\FileManager:
         arguments:
             $featureRootPath: '%kernel.root_dir%/../features'
-
-    feature_manager:
-        alias: BehatTestGenerator\Manager\FeatureManager
-
-    fixtures_manager:
-        alias: BehatTestGenerator\Manager\FixturesManager

@@ -67,7 +67,7 @@ class FeatureManager
         }
 
         foreach ($this->authenticationEmail as $path => $value) {
-            if (preg_match('/' . str_replace('/', '\\/', $path) . '/', $routes[0]['path'])) {
+            if (preg_match('/' . $path . '/', str_replace('/', '', $routes[0]['path']))) {
                 return $value;
             }
         }
@@ -237,11 +237,7 @@ class FeatureManager
                     'codeResponse' => $this->getCodeResponseFromMethod($route->getMethods()[0]),
                 ];
 
-                if (in_array(strtolower($infos['method']), ['put', 'post'])) {
-                    $infos = array_merge($infos, ['requiredFields' => $this->getRequiredFields($route, $servicesUsed)]);
-                }
-
-                $r[] = $infos;
+                $r[] = array_merge($infos, ['requiredFields' => $this->getRequiredFields($route, $servicesUsed)]);
             }
         }
 
