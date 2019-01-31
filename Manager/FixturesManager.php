@@ -13,29 +13,28 @@ use BehatTestGenerator\Manager\EntityManager as TestGeneratorEntityManager;
 
 class FixturesManager
 {
-    private $em;
-    private $fileManager;
-    private $propertyInfo;
     private $fixturesDirPath;
-    private $logManager;
     private $entityManager;
+    private $propertyInfo;
+    private $fileManager;
+    private $logManager;
+    private $em;
 
     private const TEMPLATE_PATH = __DIR__ . '/../Templates/fixtures.tpl.php';
 
     public function __construct(string $fixturesDirPath, EntityManagerInterface $em, FileManager $fileManager, LogManager $logManager, TestGeneratorEntityManager $entityManager)
     {
-        $this->em = $em;
-        $this->fileManager = $fileManager;
         $this->propertyInfo = $this->createPropertyInfoExtractor();
         $this->fixturesDirPath = $fixturesDirPath;
-        $this->logManager = $logManager;
         $this->entityManager = $entityManager;
+        $this->fileManager = $fileManager;
+        $this->logManager = $logManager;
+        $this->em = $em;
     }
 
     public function generate(string $namespace, array $servicesUsed): array
     {
         $entitiesRequired = $this->entityManager->getEntitiesRequired($namespace, $servicesUsed);
-
         $fixtures = $this->getFixturesParameters($entitiesRequired);
 
         return $this->writeFixtures($fixtures);
@@ -73,7 +72,6 @@ class FixturesManager
 
     private function setFixturesInformations(array $entities, array $fixtures = []): array
     {
-        /// here
         foreach ($entities as $entity) {
             $fixtures[$entity['service']] = [
                 'service' => $entity['service'],
@@ -88,33 +86,37 @@ class FixturesManager
                     continue;
                 }
 
-                if (isset($field['targetEntity'])) {
-                    $types = $this->propertyInfo->getTypes($entity['service'], $key) ?? [];
-                    $isNullable = null;
-                    $isCollection = null;
-                    foreach ($types as $type) {
-                        $isNullable = $type->isNullable();
-                        $isCollection = $type->isCollection();
-                    }
-
-                    if (!$this->propertyInfo->isReadable($entity['service'], $key)
-                    || !$this->propertyInfo->isWritable($entity['service'], $key)
-                    || $isNullable) {
-                        continue;
-                    }
-                    $fixtures[$entity['service']]['fields'][] = [
-                        'fieldName' => $key,
-                        'type' => 'relation',
-                        'isCollection' => $isCollection,
-                        'targetEntity' => $field['targetEntity'],
-                        'targetFixtureName' => $this->getEntityNameFromNamespace($field['targetEntity'])
-                    ];
-                } else {
+                if (!isset($field['targetEntity'])) {
                     $fixtures[$entity['service']]['fields'][] = [
                         'fieldName' => $key,
                         'type' => $field['type'],
                     ];
+
+                    continue;
                 }
+
+                $types = $this->propertyInfo->getTypes($entity['service'], $key) ?? [];
+                $isNullable = null;
+                $isCollection = null;
+
+                foreach ($types as $type) {
+                    $isNullable = $type->isNullable();
+                    $isCollection = $type->isCollection();
+                }
+
+                if (!$this->propertyInfo->isReadable($entity['service'], $key)
+                || !$this->propertyInfo->isWritable($entity['service'], $key)
+                || $isNullable) {
+                    continue;
+                }
+
+                $fixtures[$entity['service']]['fields'][] = [
+                    'fieldName' => $key,
+                    'type' => 'relation',
+                    'isCollection' => $isCollection,
+                    'targetEntity' => $field['targetEntity'],
+                    'targetFixtureName' => $this->getEntityNameFromNamespace($field['targetEntity'])
+                ];
             }
         }
 
@@ -151,7 +153,6 @@ class FixturesManager
     private function getParamsFromRoute(array $routes): array
     {
         $params = [];
-
         foreach ($routes as $route) {
             $route = $route['route'];
             preg_match_all('/\{[a-zA-Z0-9]+\}/', $route->getPath(), $params);

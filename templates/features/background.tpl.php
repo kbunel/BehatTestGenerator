@@ -1,7 +1,6 @@
 Feature: Test Routes for <?= $namespace ?><?= PHP_EOL ?>
   Background:<?= PHP_EOL ?>
-    Given the database is empty<?= PHP_EOL ?>
-    And the following fixtures files are loaded:<?= PHP_EOL ?>
+    Given the following fixtures files are loaded:<?= PHP_EOL ?>
 <?php if ($commonFixtures): ?>
       | <?= $commonFixtures ?> |<?= PHP_EOL ?>
 <?php endif ?>

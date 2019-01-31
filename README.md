@@ -56,6 +56,40 @@ class AppKernel extends Kernel
 }
 ```
 
+Behat configuration
+============
+
+```yaml
+default:
+    gherkin:
+        cache: ~
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                env: test
+                debug: true
+                class: TestAppKernel
+                path: app/TestAppKernel.php
+        Behat\MinkExtension:
+            base_url: http://example.com
+            files_path: '%paths.base%/behat/Fixtures/Files'
+            sessions:
+                default:
+                    symfony2: ~
+                javascript:
+                    selenium2: ~
+        Behatch\Extension: ~
+    suites:
+        default:
+            contexts:
+                - FeatureContext: { container: '@service_container' }
+                - Behat\MinkExtension\Context\MinkContext
+                - behatch:context:rest
+                - behatch:context:json
+                - DatabaseContext: { entityManager: '@doctrine.orm.entity_manager', loader: '@fidry_alice_data_fixtures.doctrine.persister_loader' }
+    # Add any context required, like an authentication one
+```
+
 Command
 ============
 

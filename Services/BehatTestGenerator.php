@@ -2,30 +2,30 @@
 
 namespace BehatTestGenerator\Services;
 
+use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Asset\Exception\LogicException;
-use BehatTestGenerator\Manager\FileManager;
 use BehatTestGenerator\Manager\FixturesManager;
 use BehatTestGenerator\Manager\FeatureManager;
+use BehatTestGenerator\Manager\FileManager;
 use BehatTestGenerator\Manager\LogManager;
 
 class BehatTestGenerator
 {
-    private $router;
-    private $fileManager;
     private $fixturesManager;
     private $featureManager;
+    private $fileManager;
     private $logManager;
     private $verbose;
+    private $router;
 
     public function __construct(RouterInterface $router, FileManager $fileManager, FixturesManager $fixturesManager, FeatureManager $featureManager, LogManager $logManager)
     {
-        $this->router = $router;
-        $this->fileManager = $fileManager;
         $this->fixturesManager = $fixturesManager;
         $this->featureManager = $featureManager;
+        $this->fileManager = $fileManager;
         $this->logManager = $logManager;
+        $this->router = $router;
     }
 
     public function generate(string $namespace = null, ?array $methods = null, ?string $tag = null, ?string $fromNamespace = null, bool $verbose = false)
@@ -66,6 +66,7 @@ class BehatTestGenerator
         $created = 0;
         $updated = 0;
         $testCreated = 0;
+
         foreach ($routes as $namespace => $routes) {
             try {
                 $testFolder = $this->fileManager->getOrCreateTestFolder($namespace, $this->verbose);
@@ -88,6 +89,7 @@ class BehatTestGenerator
 
             } catch (LogicException $e) {
                 $skipped[] = $namespace . ":" . "\n\t". LogManager::COMMENT_COLOR . $e->getMessage();
+
                 continue;
             }
         }
@@ -95,12 +97,16 @@ class BehatTestGenerator
         foreach ($skipped as $skip) {
             $this->logManager->log($skip, LogManager::TYPE_COMMENT);
         }
+
         $s = $created > 1 ? 's' : '';
         $this->logManager->log($created . " file" . $s . " created.", LogManager::TYPE_SUCCESS);
+
         $s = $updated > 1 ? 's' : '';
         $this->logManager->log($updated . " file" . $s  . " updated.", LogManager::TYPE_SUCCESS);
+
         $s = $testCreated > 1 ? 's' : '';
         $this->logManager->log($testCreated . " test" . $s  . " created.", LogManager::TYPE_SUCCESS);
+
         if (count($skipped) > 0) {
             $s = count($skipped) > 1 ? 's' : '';
             $this->logManager->log(count($skipped) . " controller" . $s  . " skipped.", LogManager::TYPE_COMMENT);

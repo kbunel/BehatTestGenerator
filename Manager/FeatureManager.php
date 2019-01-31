@@ -430,8 +430,8 @@ class FeatureManager
         $functionLine = $lines[$fLine];
         $paramConverted = $this->getParamConverted($fLine, $lines);
         preg_match_all('/[a-zA-Z0-9\\\\]* \\$[a-zA-Z0-9]+/', $functionLine, $functionServices);
-        $params = [];
 
+        $params = [];
         foreach ($functionServices[0] as $service) {
             $ar = explode(' ', str_replace('$', '', $service));
 

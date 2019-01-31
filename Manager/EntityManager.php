@@ -17,13 +17,13 @@ class EntityManager
     private const IGNORED_PROPERTIES = ['id', 'uuid', 'updatedAt', 'createdAt', 'deletedAt'];
     private const NATIVE_TYPES = ['string', 'int', 'array', 'bool', '\DateTime', 'DateTime'];
 
-    private $em;
     private $formFactory;
+    private $em;
 
     public function __construct(DoctrineEntityManagerInterface $em, FormFactoryInterface $formFactory)
     {
-        $this->em = $em;
         $this->formFactory = $formFactory;
+        $this->em = $em;
     }
 
     public function getEntityRequiredFieldsMappings(array $entity): array
