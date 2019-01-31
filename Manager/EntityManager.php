@@ -8,19 +8,22 @@ use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\AbstractType;
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
+
 
 class EntityManager
 {
     private const IGNORED_PROPERTIES = ['id', 'uuid', 'updatedAt', 'createdAt', 'deletedAt'];
+    private const NATIVE_TYPES = ['string', 'int', 'array', 'bool', '\DateTime', 'DateTime'];
 
-    private $em;
     private $formFactory;
+    private $em;
 
     public function __construct(DoctrineEntityManagerInterface $em, FormFactoryInterface $formFactory)
     {
-        $this->em = $em;
         $this->formFactory = $formFactory;
+        $this->em = $em;
     }
 
     public function getEntityRequiredFieldsMappings(array $entity): array
@@ -82,7 +85,7 @@ class EntityManager
                 }
 
                 $class = new \ReflectionClass($formType);
-                if ($class->getParentClass() && $class->getParentClass()->getName() == 'Symfony\Component\Form\AbstractType') {
+                if ($class->getParentClass() && $class->getParentClass()->getName() == AbstractType::class) {
                     $requiredFields = $this->getRequiredFields($formType);
                     foreach ($requiredFields as $requiredField) {
                         if (isset($requiredField['class'])) {
@@ -178,7 +181,7 @@ class EntityManager
 
             $service = explode(' ', $parameters[0])[0];
 
-            if (in_array($service, $this->getNativeTypes()) || empty($service)) {
+            if (in_array($service, self::NATIVE_TYPES) || empty($service)) {
                 continue;
             }
 
@@ -311,10 +314,5 @@ class EntityManager
                 unset($fields[$key]);
             }
         }
-    }
-
-    private function getNativeTypes(): array
-    {
-        return ['string', 'int', 'array', 'bool', '\DateTime', 'DateTime'];
     }
 }

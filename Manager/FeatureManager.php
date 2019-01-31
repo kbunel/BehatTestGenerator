@@ -11,46 +11,44 @@ use BehatTestGenerator\Manager\FileManager;
 
 class FeatureManager
 {
-    private const BACKGROUND_TPL = __DIR__ . '/../Templates/features/background.tpl.php';
-    private const SCENARIO_TPL = __DIR__ . '/../Templates/features/scenario.tpl.php';
-    private const FIXTURES_IMPORT_TPL = __DIR__ . '/../Templates/features/imports.tpl.php';
+    private const BACKGROUND_TPL        = __DIR__ . '/../Templates/features/background.tpl.php';
+    private const SCENARIO_TPL          = __DIR__ . '/../Templates/features/scenario.tpl.php';
+    private const FIXTURES_IMPORT_TPL   = __DIR__ . '/../Templates/features/imports.tpl.php';
 
-    private $fileManager;
-    private $formFactory;
-    private $em;
     private $authenticationEmail;
     private $commonFixtures;
     private $httpResponses;
+    private $fileManager;
+    private $formFactory;
+    private $em;
 
-    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, array $authenticationEmail, string $commonFixtures, array $httpResponses)
+    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, ?array $authenticationEmail, string $commonFixtures, array $httpResponses)
     {
         $this->authenticationEmail = $authenticationEmail;
+        $this->commonFixtures = $commonFixtures;
+        $this->httpResponses = $httpResponses;
         $this->fileManager = $fileManager;
         $this->formFactory = $formFactory;
         $this->em = $em;
-        $this->commonFixtures = $commonFixtures;
-        $this->httpResponses = $httpResponses;
     }
 
-    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods = null, ?string $tag = null, array $servicesUsed, bool $verbose = false): ?array
+    public function generate(string $testFolder, string $namespace, array $fixturesDetails, array $routes, ?array $methods, ?string $tag, array $servicesUsed = [], bool $verbose = false): ?array
     {
         $fileName = $this->getFileNameFromNamespace($namespace);
         $filePath = $testFolder . DIRECTORY_SEPARATOR . $fileName;
         $fixturesFilesNames = $this->getFixturesFilesNamesFromPaths($fixturesDetails);
         $routes = $this->getRequiredRouteInformations($routes, $servicesUsed);
         $parameters = [
+            'authenticationEmail' => $this->getAuthenticationEmail($routes),
+            'fixturesFilesNames' => $fixturesFilesNames,
             'commonFixtures' => $this->commonFixtures,
             'namespace' => $namespace,
-            'fixturesFilesNames' => $fixturesFilesNames,
-            'authenticationEmail' => $this->getAuthenticationEmail($routes),
+            'methods' => $methods,
             'routes' => $routes,
             'tag' => $tag,
-            'methods' => $methods,
         ];
 
-        $content = $this->getContent($filePath, $parameters);
-
-        if (!$content) {
+        if (!$content = $this->getContent($filePath, $parameters)) {
             return null;
         }
 
@@ -62,7 +60,7 @@ class FeatureManager
 
     private function getAuthenticationEmail(array $routes): ?string
     {
-        if (!$routes) {
+        if (!$routes || !$this->authenticationEmail) {
             return null;
         }
 
@@ -71,8 +69,6 @@ class FeatureManager
                 return $value;
             }
         }
-
-        return $this->authenticationEmail['default'];
     }
 
     private function getContent(string $filePath, array $parameters): ?string
@@ -298,8 +294,8 @@ class FeatureManager
                         $format = isset($options['format']) ? $this->convertDateFormat($options['format']) : 'Y-m-d';
                         return '"' . (new \DateTime('now'))->format($format) . '"';
                     default:
-                        dump($options['input']);
-                        die;
+                        // Didn't find any default value
+                        return "";
                 }
             case count($options['constraints']) > 0:
                 foreach ($options['constraints'] as $constraint) {
@@ -366,12 +362,15 @@ class FeatureManager
         $length = $end_line - $start_line;
         $source = file($filename);
         $lines = array_slice($source, $start_line, $length);
+
         foreach ($lines as $line) {
             $line = trim($line);
             preg_match('/[a-zA-Z0-9]+Type::class/', $line, $supposedFormType);
+
             if (isset($supposedFormType[0])) {
                 $supposedFormType = explode('::', $supposedFormType[0])[0];
                 $formType = $this->getServiceAssociated($supposedFormType, $servicesUsed);
+
                 if (!$formType) {
                     $formType = preg_replace('/[a-zA-Z0-9]+$/', $supposedFormType, $namespace);
                 }
@@ -431,6 +430,7 @@ class FeatureManager
         $functionLine = $lines[$fLine];
         $paramConverted = $this->getParamConverted($fLine, $lines);
         preg_match_all('/[a-zA-Z0-9\\\\]* \\$[a-zA-Z0-9]+/', $functionLine, $functionServices);
+
         $params = [];
         foreach ($functionServices[0] as $service) {
             $ar = explode(' ', str_replace('$', '', $service));
@@ -469,18 +469,21 @@ class FeatureManager
         $p = [];
         for ($x = $fLine; (trim($lines[$x]) != '' || $x == 0); $x--) {
             $line = trim($lines[$x]);
+
             if (preg_match('/\@ParamConverter/', $line)) {
                 $paramConverterLine = $line;
                 preg_match('/\(\"[a-zA-Z0-9-_]+\"/', $paramConverterLine, $paramConverted);
                 $paramsConverted = preg_replace('/[\(,"]/', '', $paramConverted);
                 preg_match('/options=\{[a-zA-Z0-9\"\!\ \-\_\!\:]+\}/', $paramConverterLine, $options);
+
                 if (count($options) == 0) {
                     continue;
                 }
+
                 $p[$paramsConverted[0]] = preg_replace('/(options={)|}|\"|\ /', '', $options[0]);
                 $options = explode(',', $p[$paramsConverted[0]]);
-                $p[$paramsConverted[0]] = [];
 
+                $p[$paramsConverted[0]] = [];
                 foreach ($options as $option) {
                     $opt = explode(':', $option);
                     $p[$paramsConverted[0]] = array_merge($p[$paramsConverted[0]], [$opt[0] => str_replace('!', '', $opt[1])]);

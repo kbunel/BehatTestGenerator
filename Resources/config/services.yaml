@@ -15,7 +15,7 @@ services:
 
     BehatTestGenerator\Command\BehatTestGeneratorCommand:
         tags:
-            - { name: 'console.command', command: 'kbunel:generate:tests' }
+            - { name: 'console.command', command: 'kbunel:behat:generate-test' }
 
     BehatTestGenerator\Manager\FixturesManager:
         arguments:
@@ -24,8 +24,6 @@ services:
     BehatTestGenerator\Manager\FeatureManager:
         arguments:
             $commonFixtures: 'Base/common.yaml'
-            $authenticationEmail:
-                default: ''
             $httpResponses:
                 get: 200
                 put: 204

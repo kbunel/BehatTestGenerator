@@ -10,14 +10,14 @@ class FileManager
     public const FILE_CREATED = 1;
     public const FILE_UPDATED = 2;
 
-    private $fs;
     private $featureRootPath;
+    private $fs;
 
     public function __construct(string $featureRootPath, Filesystem $fs, LogManager $logManager)
     {
-        $this->fs = $fs;
         $this->featureRootPath = $featureRootPath;
         $this->logManager = $logManager;
+        $this->fs = $fs;
     }
 
     public function parseTemplate(string $templatePath, array $parameters): string
@@ -35,7 +35,6 @@ class FileManager
         $path = $this->featureRootPath . DIRECTORY_SEPARATOR . $controllerPath;
 
         if (!file_exists($path)) {
-
             mkdir($path, 0777, true);
 
             if ($verbose) {
@@ -71,5 +70,4 @@ class FileManager
 
         return implode('/', $ar);
     }
-
 }
