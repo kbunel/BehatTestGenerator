@@ -46,7 +46,7 @@ class AppKernel extends Kernel
     {
         $bundles = array(
             // ...
-            new BehatTestGenerator\BehatTestGeneratorBundle(),
+            new BehatTestGenerator\BehatTestGeneratorBundle();
         );
 
         // ...
@@ -101,12 +101,12 @@ behat_test_generator:
     fixtures:
         folder: 'path/to/the/fixtures/folder'
     features:
-        commonFixtures: 'NameOfTheCommonFileFixtures.yaml' // File used to add the common fixture with the fixtures generated
+        commonFixtures: 'NameOfTheCommonFileFixtures.yaml' # Path to the file used to add the common fixture with the fixtures generated
         authenticationEmails:
-            ^admin: 'super_admin@test.com' // ['route_regex' => 'email_used']
+            ^admin: 'super_admin@test.com' # ['route_regex' => 'email_used']
             ^user: 'user@test.com'
-            // ...
-        httpResponses: // http responses used with test expectations
+            # ...
+        httpResponses: # http responses used with test expectations
             get: 200
             put: 204
             patch: 204
