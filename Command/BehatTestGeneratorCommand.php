@@ -25,11 +25,11 @@ class BehatTestGeneratorCommand extends ContainerAwareCommand
     {
         $this
             ->setName(self::$defaultName)
-            ->setDescription('Generate test for controller\'s route')
-            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Should the test be generated from a specific controller ?')
-            ->addOption('tag', null, InputOption::VALUE_OPTIONAL, 'Should the created scenarios be tagged ?')
-            ->addOption('methods', null, InputOption::VALUE_OPTIONAL, 'Should the test generated be only for some methods ?')
-            ->addOption('fromNamespace', null, InputOption::VALUE_OPTIONAL, 'Namespace begining from which test will be generated')
+            ->setDescription('Generate test for controller\'s route.')
+            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Restrict test generated to a specified namespace.')
+            ->addOption('tag', null, InputOption::VALUE_OPTIONAL, 'Add a tag to the generated test.')
+            ->addOption('methods', null, InputOption::VALUE_OPTIONAL, 'Restrict test generated to some methods, separated by a comma.')
+            ->addOption('fromNamespace', null, InputOption::VALUE_OPTIONAL, 'Restrict test where namespaces start from a specific namespace.')
         ;
     }
 

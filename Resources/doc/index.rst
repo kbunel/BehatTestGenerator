@@ -8,7 +8,7 @@ Open a command console, enter your project directory and execute:
 
 .. code-block:: bash
 
-    $ composer require kbunel/BehatTestGenerator
+    $ composer require kbunel/behat-test-generator --dev
 
 Applications that don't use Symfony Flex
 ----------------------------------------
@@ -21,7 +21,7 @@ following command to download the latest stable version of this bundle:
 
 .. code-block:: terminal
 
-    $ composer require kbunel/BehatTestGenerator
+    $ composer require kbunel/behat-test-generator --dev
 
 This command requires you to have Composer installed globally, as explained
 in the `installation chapter`_ of the Composer documentation.
@@ -42,13 +42,12 @@ in the ``app/AppKernel.php`` file of your project:
     {
         public function registerBundles()
         {
-            $bundles = array(
-                // ...
-
-                new kbunel\BehatTestGenerator(),
-            );
-
             // ...
+
+            if (in_array($this->getEnvironment(), array('dev', 'test', 'behat'))) {
+                $bundles[] = new BehatTestGenerator\BehatTestGeneratorBundle();
+                // ...
+            );
         }
 
         // ...
