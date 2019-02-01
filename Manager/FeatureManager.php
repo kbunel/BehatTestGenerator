@@ -15,16 +15,16 @@ class FeatureManager
     private const SCENARIO_TPL          = __DIR__ . '/../Templates/features/scenario.tpl.php';
     private const FIXTURES_IMPORT_TPL   = __DIR__ . '/../Templates/features/imports.tpl.php';
 
-    private $authenticationEmail;
+    private $authenticationEmails;
     private $commonFixtures;
     private $httpResponses;
     private $fileManager;
     private $formFactory;
     private $em;
 
-    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, ?array $authenticationEmail, string $commonFixtures, array $httpResponses)
+    public function __construct(FileManager $fileManager, FormFactoryInterface $formFactory, EntityManagerInterface $em, ?array $authenticationEmails, string $commonFixtures, array $httpResponses)
     {
-        $this->authenticationEmail = $authenticationEmail;
+        $this->authenticationEmails = $authenticationEmails;
         $this->commonFixtures = $commonFixtures;
         $this->httpResponses = $httpResponses;
         $this->fileManager = $fileManager;
@@ -60,11 +60,11 @@ class FeatureManager
 
     private function getAuthenticationEmail(array $routes): ?string
     {
-        if (!$routes || !$this->authenticationEmail) {
+        if (!$routes || !$this->authenticationEmails) {
             return null;
         }
 
-        foreach ($this->authenticationEmail as $path => $value) {
+        foreach ($this->authenticationEmails as $path => $value) {
             if (preg_match('/' . $path . '/', str_replace('/', '', $routes[0]['path']))) {
                 return $value;
             }

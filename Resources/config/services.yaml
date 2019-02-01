@@ -24,6 +24,7 @@ services:
     BehatTestGenerator\Manager\FeatureManager:
         arguments:
             $commonFixtures: 'Base/common.yaml'
+            $authenticationEmails: ~
             $httpResponses:
                 get: 200
                 put: 204

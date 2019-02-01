@@ -27,7 +27,7 @@ class BehatTestGeneratorExtension extends Extension
 			$featureDefinition = $container->getDefinition('BehatTestGenerator\Manager\FeatureManager');
 
 			if (isset($config['features']['authenticationEmails'])) {
-				$featureDefinition->replaceArgument('$authenticationEmail', $config['features']['authenticationEmails']);
+				$featureDefinition->replaceArgument('$authenticationEmails', $config['features']['authenticationEmails']);
 			}
 
 			if (isset($config['features']['commonFixtures'])) {
