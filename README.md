@@ -1,4 +1,4 @@
-This bundle is in development and is currently not operational
+This project is not maintened anymore
 
 Add a command to generate API with behat. This command will parse controllers to get the routes and determine create simple test. The tests expectations are based on the HTTP response according to the method.
 
