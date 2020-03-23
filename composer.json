@@ -1,7 +1,7 @@
 {
     "name": "kbunel/behat-test-generator",
     "type": "symfony-bundle",
-    "description": "Generate auutomatictests for all routes in you application, test that the response is good according to REST behavior.",
+    "description": "Generate automatic tests for all routes in you application, test that the response is good according to REST behavior.",
     "keywords": [ "test", "generator", "behat", "api" ],
     "license": "MIT",
     "authors": [
