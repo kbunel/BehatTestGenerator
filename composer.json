@@ -1,6 +1,6 @@
 {
     "name": "kbunel/behat-test-generator",
-	"type": "symfony-bundle",
+    "type": "symfony-bundle",
     "description": "This bundle is currently in development",
     "keywords": [ "test", "generator", "behat", "api" ],
     "license": "MIT",
